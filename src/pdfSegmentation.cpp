@@ -59,6 +59,7 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
 	int k=0;
 	bool f2=true;
 	int a,b,c,d;
+
 	image_drawer draw(image);
 	while (f2){
 
@@ -77,23 +78,28 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
 				c =int(coord[2])+25;
 				d=792-int(coord[3]);
 				draw.rectangle(a,b,c,d);
+				if (lineElement!=0){
+					while (f3){
 
-				while (f3){
+						nextline=lineElement->NextSiblingElement("textline");
+						if (nextline == 0 ) {f3=false;}
+						else {
+							int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
+							int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
+							if(l1!=l2 ){
+							double* co=get_coord(nextline);
+							d=792-int(co[3]);
+							draw.rectangle(a,b,c,d);
+							b=int(co[1])+25;
 
-					nextline=lineElement->NextSiblingElement("textline");
-					if (nextline == 0 ) {f3=false;}
-					else if(atof(lineElement->FirstChildElement("text")->Attribute("size")) != atof(nextline->FirstChildElement("text")->Attribute("size"))){
-						double *co=get_coord(lineElement);
-						d=792-int(co[3]);
-						draw.rectangle(a,b,c,d);
-						b=int(co[2])+25;
+							}
+							lineElement=nextline;
+							//if (nextline->NextSiblingElement("textline")==0){f3=false;}
+						}
 
-					}
-					lineElement=nextline;
-					//if (nextline->NextSiblingElement("textline")==0){f3=false;}
-					//image.save_image(name_out_ss.str());
-
+				  }
 				}
+
 				++k;
 		}
 
