@@ -51,7 +51,7 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
 
 
 	std::stringstream name_out_ss;
-	name_out_ss << "/home/miky/Scrivania/prova-"<<i<<"_draw2.bmp";
+	name_out_ss << "/home/bene/Scrivania/prova-"<<i<<"_draw2.bmp";
 	TiXmlElement* itemElement = 0;
 	TiXmlElement* lineElement=0;
 	TiXmlElement* nextline=0;
@@ -110,7 +110,7 @@ int main() {
 
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	TiXmlDocument doc;
-	if(!doc.LoadFile("/home/miky/Scrivania/esempio.xml"))
+	if(!doc.LoadFile("/home/bene/Scrivania/esempio.xml"))
 	{
 	    cerr << doc.ErrorDesc() << endl;
 	    return 0;
@@ -129,7 +129,7 @@ bool f1=true;
 while (f1){
 
 		std::stringstream name_ss;
-		name_ss << "/home/miky/Scrivania/prova-"<<i<<".bmp";
+		name_ss << "/home/bene/Scrivania/prova-"<<i<<".bmp";
 		bitmap_image image(name_ss.str());
 
 		if (i==0) {	node = node->FirstChildElement("page");}

@@ -38,19 +38,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: pdf-segmentation
+all: pdfSegmentation
 
 # Tool invocations
-pdf-segmentation: $(OBJS) $(USER_OBJS)
+pdfSegmentation: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/home/bene/Scrivania/tinyxml -o "pdf-segmentation" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/home/bene/Scrivania/tinyxml -o "pdfSegmentation" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C++_DEPS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) pdf-segmentation
+	-$(RM) $(OBJS)$(C++_DEPS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) pdfSegmentation
 	-@echo ' '
 
 .PHONY: all clean dependents
