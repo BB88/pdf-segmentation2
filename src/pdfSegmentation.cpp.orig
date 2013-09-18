@@ -45,13 +45,17 @@ double* get_coord(TiXmlElement* itemElement){
 
 
 
-bool scan_page (  TiXmlNode* node, bitmap_image image, int i );
+bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y );
 
-bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
+bool scan_page (  TiXmlNode* node, bitmap_image image, int i,int y  ){
 
 
 	std::stringstream name_out_ss;
-	name_out_ss << "/home/miky/Scrivania/prova-"<<i<<"_draw2.bmp";
+<<<<<<< HEAD
+	name_out_ss << "/home/bene/Scrivania/prova-"<<i<<"_draw2.bmp";
+=======
+	name_out_ss <<  "/home/miky/Scrivania/progettoTBD/andre_bbox-"<<i<<".bmp";
+>>>>>>> f4e0e44e7d50b4bd5702feb38a20ff20fd7e4756
 	TiXmlElement* itemElement = 0;
 	TiXmlElement* lineElement=0;
 	TiXmlElement* nextline=0;
@@ -79,28 +83,30 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
 				int	d=y-int(coord[3]);
 
 				draw.rectangle(a,b,c,d);
-				if (lineElement!=0){
-					while (f3){
-
-						nextline=lineElement->NextSiblingElement("textline");
-						if (nextline == 0 ) {f3=false;}
-						else {
-							int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
-							int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
-							if(l1!=l2 ){
-							double* co=get_coord(nextline);
-							d=792-int(co[3]);
-							draw.rectangle(a,b,c,d);
-							b=int(co[1])+25;
-
-							}
-							lineElement=nextline;
-							//if (nextline->NextSiblingElement("textline")==0){f3=false;}
-						}
-
-				  }
-				}
-
+// togliere questo while per tagliare solo i bbox
+//					 while (f3){
+//
+//						nextline=lineElement->NextSiblingElement("textline");
+//						if (nextline == 0 ) {f3=false;}
+//						else {
+//							int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
+//							int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
+//							std::string font1 = lineElement->FirstChildElement("text")->Attribute("font");
+//							std::string font2 = nextline->FirstChildElement("text")->Attribute("font");
+//							//se devo tagliare
+//							if(l1!=l2 || font1!=font2){
+//								double *co=get_coord(nextline);
+//								d=y-int(co[3]);
+//								draw.rectangle(a,b,c,d);
+//								//b=int(co[1])+25;
+//
+//							}
+//
+//							lineElement=nextline;
+//							if (nextline->NextSiblingElement("textline")==0){f3=false;}
+//						}
+//
+//				  }
 				++k;
 		}
 
@@ -117,8 +123,12 @@ int main() {
 
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	TiXmlDocument doc;
+<<<<<<< HEAD
+	if(!doc.LoadFile("/home/bene/Scrivania/esempio.xml"))
+=======
 
 	if(!doc.LoadFile("/home/miky/Scrivania/progettoTBD/xml/andre.xml"))
+>>>>>>> f4e0e44e7d50b4bd5702feb38a20ff20fd7e4756
 	{
 	    cerr << doc.ErrorDesc() << endl;
 	    return 0;
@@ -141,8 +151,12 @@ bool f1=true;
 while (f1){
 
 		std::stringstream name_ss;
+<<<<<<< HEAD
+		name_ss << "/home/bene/Scrivania/prova-"<<i<<".bmp";
+=======
 
 		name_ss <<"/home/miky/Scrivania/progettoTBD/andre-"<<i<<".bmp";
+>>>>>>> f4e0e44e7d50b4bd5702feb38a20ff20fd7e4756
 		bitmap_image image(name_ss.str());
 
 		if (i==0) {	node = node->FirstChildElement("page");}
