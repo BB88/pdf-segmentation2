@@ -51,7 +51,7 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
 
 
 	std::stringstream name_out_ss;
-	name_out_ss << "../progettoTDB/prova-"<<i<<"_draw2.bmp";
+	name_out_ss << "../progettoTBD/prova-"<<i<<"_draw2.bmp";
 	TiXmlElement* itemElement = 0;
 	TiXmlElement* lineElement=0;
 	TiXmlElement* nextline=0;
@@ -118,7 +118,7 @@ int main() {
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	TiXmlDocument doc;
 
-	if(!doc.LoadFile("../progettoTDB/xml/salt.xml"))
+	if(!doc.LoadFile("../progettoTBD/xml/salt.xml"))
 	{
 	    cerr << doc.ErrorDesc() << endl;
 	    return 0;
@@ -142,7 +142,7 @@ while (f1){
 
 		std::stringstream name_ss;
 
-		name_ss <<"../progettoTDB/bmp/salt/salt-"<<i<<".bmp";
+		name_ss <<"../progettoTBD/bmp/salt/salt-"<<i<<".bmp";
 		bitmap_image image(name_ss.str());
 
 		if (i==0) {	node = node->FirstChildElement("page");}
