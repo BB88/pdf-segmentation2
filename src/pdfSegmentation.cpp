@@ -36,8 +36,8 @@ double* get_coord(TiXmlElement* itemElement){
 	test = strtok ((char*)co,",");
 	while (test != NULL)
 		{
-			coord[l]=atof(test);
-			test= strtok (NULL, ",");
+			coord[l] = atof(test);
+			test = strtok (NULL, ",");
 			++l;
 		}
 	return coord;
@@ -45,20 +45,20 @@ double* get_coord(TiXmlElement* itemElement){
 
 
 
-bool scan_page (  TiXmlNode* node, bitmap_image image, int i );
+bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y );
 
-bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
+bool scan_page (  TiXmlNode* node, bitmap_image image, int i,int y  ){
 
 
 	std::stringstream name_out_ss;
-	name_out_ss << "/home/miky/Scrivania/prova-"<<i<<"_draw2.bmp";
+	name_out_ss <<  "/home/miky/Scrivania/progettoTBD/andre_bbox-"<<i<<".bmp";
 	TiXmlElement* itemElement = 0;
 	TiXmlElement* lineElement=0;
 	TiXmlElement* nextline=0;
 
 	int k=0;
 	bool f2=true;
-	int a,b,c,d;
+
 
 	image_drawer draw(image);
 	while (f2){
@@ -69,37 +69,40 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i  ){
 		if (itemElement==0) {f2=false;}
 		else {
 
-				lineElement=itemElement->FirstChildElement("textline");
+				lineElement = itemElement->FirstChildElement("textline");
 				bool f3=true;
 
 				double *coord=get_coord(itemElement);
-				a=int(coord[0])+25;
-				b=792-int(coord[1]);
-				c =int(coord[2])+25;
-				d=792-int(coord[3]);
+				int a=int(coord[0])+25;
+				int b=y-int(coord[1]);
+				int c =int(coord[2])+25;
+				int	d=y-int(coord[3]);
+
 				draw.rectangle(a,b,c,d);
-				if (lineElement!=0){
-					while (f3){
-
-						nextline=lineElement->NextSiblingElement("textline");
-						if (nextline == 0 ) {f3=false;}
-						else {
-							int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
-							int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
-							if(l1!=l2 ){
-							double* co=get_coord(nextline);
-							d=792-int(co[3]);
-							draw.rectangle(a,b,c,d);
-							b=int(co[1])+25;
-
-							}
-							lineElement=nextline;
-							//if (nextline->NextSiblingElement("textline")==0){f3=false;}
-						}
-
-				  }
-				}
-
+// togliere questo while per tagliare solo i bbox
+//					 while (f3){
+//
+//						nextline=lineElement->NextSiblingElement("textline");
+//						if (nextline == 0 ) {f3=false;}
+//						else {
+//							int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
+//							int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
+//							std::string font1 = lineElement->FirstChildElement("text")->Attribute("font");
+//							std::string font2 = nextline->FirstChildElement("text")->Attribute("font");
+//							//se devo tagliare
+//							if(l1!=l2 || font1!=font2){
+//								double *co=get_coord(nextline);
+//								d=y-int(co[3]);
+//								draw.rectangle(a,b,c,d);
+//								//b=int(co[1])+25;
+//
+//							}
+//
+//							lineElement=nextline;
+//							if (nextline->NextSiblingElement("textline")==0){f3=false;}
+//						}
+//
+//				  }
 				++k;
 		}
 
@@ -116,7 +119,8 @@ int main() {
 
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	TiXmlDocument doc;
-	if(!doc.LoadFile("/home/miky/Scrivania/esempio.xml"))
+
+	if(!doc.LoadFile("/home/miky/Scrivania/progettoTBD/xml/andre.xml"))
 	{
 	    cerr << doc.ErrorDesc() << endl;
 	    return 0;
@@ -128,6 +132,10 @@ int main() {
 	node = doc.FirstChildElement( "pages" );
 	assert( node );
 
+	TiXmlElement* Element = 0;
+	Element = node-> FirstChildElement("page");
+	double *y_coord=get_coord(Element);
+	int y= y_coord[3];
 
 int i=0;
 bool f1=true;
@@ -135,7 +143,8 @@ bool f1=true;
 while (f1){
 
 		std::stringstream name_ss;
-		name_ss << "/home/miky/Scrivania/prova-"<<i<<".bmp";
+
+		name_ss <<"/home/miky/Scrivania/progettoTBD/andre-"<<i<<".bmp";
 		bitmap_image image(name_ss.str());
 
 		if (i==0) {	node = node->FirstChildElement("page");}
@@ -145,7 +154,7 @@ while (f1){
 
 		else {
 
-		scan_page (node,image,i);
+		scan_page (node,image,i,y);
 		++i;
 		}
 		if  (node->NextSiblingElement("page")==0){f1=false;}
