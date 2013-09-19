@@ -51,7 +51,7 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
 
 
 	std::stringstream name_out_ss;
-	name_out_ss << "../progettoTBD/prova-"<<i<<"_draw2.bmp";
+	name_out_ss << "../progettoTBD/prova_lettera-"<<i<<".bmp";
 	TiXmlElement* itemElement = 0;
 	TiXmlElement* lineElement=0;
 	TiXmlElement* nextline=0;
@@ -61,12 +61,13 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
 
 
 	image_drawer draw(image);
+
 	while (f2){
 
 		if (k==0){	itemElement = node-> FirstChildElement("textbox"); }
 		else {itemElement = itemElement->NextSiblingElement("textbox");}
 
-		if (itemElement==0) {f2=false;}
+		if (itemElement == 0) {f2=false;}
 		else {
 
 				lineElement = itemElement->FirstChildElement("textline");
@@ -79,33 +80,36 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
 				int	d=y-int(coord[3]);
 
 				draw.rectangle(a,b,c,d);
-				if (lineElement!=0){
-					while (f3){
 
+//togliere questo per tagliare solo i bbox, con taglia per grandezza e carattere
+					while (f3)
+					{
 						nextline=lineElement->NextSiblingElement("textline");
 						if (nextline == 0 ) {f3=false;}
 						else {
-							int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
-							int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
-							if(l1!=l2 ){
-							double* co=get_coord(nextline);
-							d=792-int(co[3]);
-							draw.rectangle(a,b,c,d);
-							b=int(co[1])+25;
+								int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
+								int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
+								std::string font1 = lineElement->FirstChildElement("text")->Attribute("font");
+								std::string font2 = nextline->FirstChildElement("text")->Attribute("font");
 
-							}
+								if(l1!=l2 || font1!=font2){
+											double* co=get_coord(nextline);
+											d=y-int(co[3]);
+											draw.rectangle(a,b,c,d);
+											//b=int(co[1])+25;
+											}
+
 							lineElement=nextline;
-							//if (nextline->NextSiblingElement("textline")==0){f3=false;}
+							if (nextline->NextSiblingElement("textline")==0){f3=false;}
 						}
-
 				  }
-				}
-
 				++k;
 		}
 
+
 		if (itemElement->NextSibling("textbox")==0){f2=false;}
 		}
+
 	image.save_image(name_out_ss.str());
 	return true;
 }
@@ -118,7 +122,7 @@ int main() {
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	TiXmlDocument doc;
 
-	if(!doc.LoadFile("../progettoTBD/xml/salt.xml"))
+	if(!doc.LoadFile("../progettoTBD/xml/prova.xml"))
 	{
 	    cerr << doc.ErrorDesc() << endl;
 	    return 0;
@@ -142,7 +146,7 @@ while (f1){
 
 		std::stringstream name_ss;
 
-		name_ss <<"../progettoTBD/bmp/salt/salt-"<<i<<".bmp";
+		name_ss <<"../progettoTBD/bmp/prova/prova-"<<i<<".bmp";
 		bitmap_image image(name_ss.str());
 
 		if (i==0) {	node = node->FirstChildElement("page");}
