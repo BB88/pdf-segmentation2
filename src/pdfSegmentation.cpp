@@ -24,8 +24,6 @@
 
 using namespace std;
 
-
-
 double* get_coord(TiXmlElement* itemElement);
 double* get_coord(TiXmlElement* itemElement){
 
@@ -44,122 +42,173 @@ double* get_coord(TiXmlElement* itemElement){
 }
 
 
+void build_doc( );
+void build_doc( ){
 
-bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y );
+	// Make xml:
+	TiXmlDocument doc;
+	TiXmlDeclaration * decl = new TiXmlDeclaration( "1.0", "", "" );
+	TiXmlElement * element = new TiXmlElement( "pages" );
+	doc.LinkEndChild( decl );
+	doc.LinkEndChild( element );
+	doc.SaveFile( "madeByHand.xml" );
+}
 
-bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
+bool add_page( TiXmlElement* page );
+bool add_page( TiXmlElement* page ){
 
+		TiXmlDocument doc;
+		if(!doc.LoadFile("madeByHand.xml")){
+			cerr << doc.ErrorDesc() << endl;
+			return 0;
+		}
+		TiXmlElement* node = 0;
+		node = doc.FirstChildElement( "pages" );
+		assert( node );
+		TiXmlElement* new_page = 0;
+		new_page = new TiXmlElement( "page" );
+		const char *id = page->Attribute("id");
+		const char *bbox = page->Attribute("bbox");
+		const char *rotate = page->Attribute("rotate");
+		new_page->SetAttribute("id",id);
+		new_page->SetAttribute("bbox",bbox);
+		new_page->SetAttribute("rotate",rotate);
+		node->LinkEndChild( new_page );
+		doc.SaveFile();
+		return true;
+}
+
+bool add_rect( int i, int a, int b, int c, int d );
+bool add_rect( int i, int a, int b, int c, int d ){
+
+	TiXmlDocument doc;
+	if(!doc.LoadFile("madeByHand.xml")){
+		cerr << doc.ErrorDesc() << endl;
+		return 0;
+	}
+	int j = 0;
+	TiXmlNode* node = 0;
+	node = doc.FirstChildElement( "pages" );
+	assert( node );
+	TiXmlElement* elem = 0;
+	elem = node-> FirstChildElement("page");
+	while ( j < i ){
+		elem = elem->NextSiblingElement("page");
+		j++;
+	}
+	TiXmlElement* rect = 0;
+	rect = new TiXmlElement( "rect" );
+	stringstream strs;
+	strs << a<<","<<b<<","<<c<<","<<d;
+	string temp_str = strs.str();
+	const char *bbox = (char*) temp_str.c_str();
+	rect->SetAttribute("bbox",bbox);
+	elem->LinkEndChild( rect );
+	doc.SaveFile();
+	return true;
+}
+
+bool scan_page ( int n_page, TiXmlNode* node, bitmap_image image, int i, int y );
+bool scan_page ( int n_page, TiXmlNode* node, bitmap_image image, int i, int y ){
 
 	std::stringstream name_out_ss;
 	name_out_ss << "../progettoTBD/prova_lettera-"<<i<<".bmp";
 	TiXmlElement* itemElement = 0;
-	TiXmlElement* lineElement=0;
-	TiXmlElement* nextline=0;
+	TiXmlElement* lineElement = 0;
+	TiXmlElement* nextline = 0;
 
-	int k=0;
-	bool f2=true;
+	int k = 0;
+	bool f2 = true;
 
 
 	image_drawer draw(image);
 
 	while (f2){
 
-		if (k==0){	itemElement = node-> FirstChildElement("textbox"); }
-		else {itemElement = itemElement->NextSiblingElement("textbox");}
+		if ( k == 0 ){	itemElement = node-> FirstChildElement("textbox"); }
+		else { itemElement = itemElement->NextSiblingElement("textbox"); }
 
-		if (itemElement == 0) {f2=false;}
+		if ( itemElement == 0 ) { f2 = false; }
 		else {
+			lineElement = itemElement->FirstChildElement("textline");
+			bool f3 = true;
 
-				lineElement = itemElement->FirstChildElement("textline");
-				bool f3=true;
+			double *coord = get_coord(itemElement);
+			int a = int(coord[0])+25;
+			int b = y-int(coord[1]);
+			int c = int(coord[2])+25;
+			int	d = y-int(coord[3]);
 
-				double *coord=get_coord(itemElement);
-				int a=int(coord[0])+25;
-				int b=y-int(coord[1]);
-				int c =int(coord[2])+25;
-				int	d=y-int(coord[3]);
-
-				draw.rectangle(a,b,c,d);
+			draw.rectangle(a,b,c,d);
+			add_rect(n_page, a, b, c, d);
 
 //togliere questo per tagliare solo i bbox, con taglia per grandezza e carattere
-					while (f3)
-					{
-						nextline=lineElement->NextSiblingElement("textline");
-						if (nextline == 0 ) {f3=false;}
-						else {
-								int l1=atof(lineElement->FirstChildElement("text")->Attribute("size"));
-								int l2=atof(nextline->FirstChildElement("text")->Attribute("size"));
-								std::string font1 = lineElement->FirstChildElement("text")->Attribute("font");
-								std::string font2 = nextline->FirstChildElement("text")->Attribute("font");
-
-								if(l1!=l2 || font1!=font2){
-											double* co=get_coord(nextline);
-											d=y-int(co[3]);
-											draw.rectangle(a,b,c,d);
-											//b=int(co[1])+25;
-											}
-
-							lineElement=nextline;
-							if (nextline->NextSiblingElement("textline")==0){f3=false;}
-						}
-				  }
-				++k;
+			while (f3){
+				nextline=lineElement->NextSiblingElement("textline");
+				if (nextline == 0 ) {f3 = false;}
+				else {
+					int l1 = atof(lineElement->FirstChildElement("text")->Attribute("size"));
+					int l2 = atof(nextline->FirstChildElement("text")->Attribute("size"));
+					std::string font1 = lineElement->FirstChildElement("text")->Attribute("font");
+					std::string font2 = nextline->FirstChildElement("text")->Attribute("font");
+					if( l1 != l2 || font1 != font2 ){
+						double* co=get_coord(nextline);
+						d=y-int(co[3]);
+						draw.rectangle(a,b,c,d);
+						add_rect(n_page, a, b, c, d);
+						//b=int(co[1])+25;
+					}
+					lineElement = nextline;
+					if ( nextline->NextSiblingElement("textline") == 0 ){ f3 = false; }
+				}
+			}
+			++k;
 		}
-
-
-		if (itemElement->NextSibling("textbox")==0){f2=false;}
-		}
-
+		if ( itemElement->NextSibling("textbox") == 0 ) { f2 = false; }
+	}
 	image.save_image(name_out_ss.str());
 	return true;
 }
 
-
 int main() {
-
-
 
 	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	TiXmlDocument doc;
-
-	if(!doc.LoadFile("../progettoTBD/xml/prova.xml"))
-	{
-	    cerr << doc.ErrorDesc() << endl;
+	if(!doc.LoadFile("../progettoTBD/xml/salt.xml")){
+		cerr << doc.ErrorDesc() << endl;
 	    return 0;
 	}
-
+	build_doc();	// nuovo xml
 	TiXmlNode* node = 0;
-
-
 	node = doc.FirstChildElement( "pages" );
 	assert( node );
-
 	TiXmlElement* Element = 0;
 	Element = node-> FirstChildElement("page");
-	double *y_coord=get_coord(Element);
-	int y= y_coord[3];
+	add_page(Element);
+	int n_page = 0;
+	double *y_coord = get_coord(Element);
+	int y = y_coord[3];
 
-int i=0;
-bool f1=true;
 
-while (f1){
+	int i = 0;
+	bool f1 = true;
 
+	while ( f1 ){
 		std::stringstream name_ss;
-
-		name_ss <<"../progettoTBD/bmp/prova/prova-"<<i<<".bmp";
-		bitmap_image image(name_ss.str());
-
-		if (i==0) {	node = node->FirstChildElement("page");}
-		else {node = node->NextSiblingElement("page");}
-
-		if (node==0 ) {f1=false;}
-
+		name_ss <<"../progettoTBD/bmp/salt/salt-"<<i<<".bmp";
+		bitmap_image image( name_ss.str() );
+		if ( i == 0 ) {	node = node->FirstChildElement("page");	}
 		else {
-
-		scan_page (node,image,i,y);
-		++i;
+			node = node->NextSiblingElement("page");
+			add_page( node->ToElement() );
+			n_page ++;
 		}
-		if  (node->NextSiblingElement("page")==0){f1=false;}
+		if ( node == 0 ) { f1 = false; }
+		else {
+			scan_page ( n_page, node, image, i, y );
+			++i;
+		}
+		if  ( node->NextSiblingElement("page") == 0 ){ f1 = false; }
 	}
 	return 0;
 }
