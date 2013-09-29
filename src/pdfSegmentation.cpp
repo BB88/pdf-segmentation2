@@ -73,21 +73,24 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
 		else {
 
 				lineElement = itemElement->FirstChildElement("textline");
-
 				double *coord=get_coord(itemElement);
 				int a=int(coord[0])+25;
 				int b=y-int(coord[1]);
 				int c=int(coord[2])+25;
 				int	d=y-int(coord[3]);
-
+				int	last=d;
 				int limit = c-((c-a)/5);
 
-				draw.rectangle(a,b,c,d);
+			//	draw.rectangle(a,b,c,d);
 
                 //togliere questo per tagliare solo i bbox, con taglia per grandezza e carattere
 				bool f3=true;
+				bool drawn=false;
+				int c_line;
+
 				while (f3)
 				{
+
 					nextline=lineElement->NextSiblingElement("textline");
 					if (nextline == 0 ) {f3=false;}
 					else {
@@ -96,45 +99,37 @@ bool scan_page (  TiXmlNode* node, bitmap_image image, int i, int y ){
 							std::string font1 = lineElement->FirstChildElement("text")->Attribute("font");
 							std::string font2 = nextline->FirstChildElement("text")->Attribute("font");
 
-
 							if(l1!=l2 || font1!=font2){
-								double* co=get_coord(nextline);
-								d=y-int(co[3]);
+								double* next_coord=get_coord(nextline);
+								d=y-int(next_coord[3]);
 								draw.rectangle(a,b,c,d);
+							    b=d;
+								drawn=true;
 								}
-							else {
-								letterElement=lineElement->FirstChildElement("text");
-								bool f4=true;
-								while (f4)
-								{
-									if (letterElement->NextSibling("text")==0){f4=false;}
-									else{letterElement=letterElement->NextSiblingElement("text");}
-								}
+//							else{
+//							double *line_co=get_coord(lineElement);
+//							c_line=int(line_co[2])+25;
+//
+//							if(c_line<limit)
+//								{
+//									double* next_coord=get_coord(nextline);
+//									d=y-int(next_coord[3]);
+//									draw.rectangle(a,b,c,d);
+//									b=d;
+//								    drawn=true;
+//								}
+//							}
+							lineElement=nextline;
+							if (nextline->NextSiblingElement("textline")==0){f3=false;}
 
-								letterElement=letterElement->PreviousSibling("text")->ToElement();
+							}
 
-								double *letter_coord=get_coord(letterElement);
-
-								int c_lettera=int(letter_coord[2])+25;
-								cout <<limit << endl;
-								cout <<c_lettera << endl;
-
-								if ((c_lettera <= limit))
-								{
-									double *next_coord=get_coord(nextline);
-									d=y-int(next_coord[3]);
-									cout <<"...."<<d << endl;
-									draw.rectangle(a,b,c,d);
-								}
-
-						}
-						lineElement=nextline;
-						if (nextline->NextSiblingElement("textline")==0){f3=false;}
-					}
 			  }
+				if(drawn==false)
+					draw.rectangle(a,b,c,d);
+				else{draw.rectangle(a,b,c,last);}
 			++k;
 		}
-
 
 		if (itemElement->NextSibling("textbox")==0){f2=false;}
 		}
