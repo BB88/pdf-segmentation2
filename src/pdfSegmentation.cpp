@@ -51,14 +51,14 @@ void build_doc( ){
 	TiXmlElement * element = new TiXmlElement( "pages" );
 	doc.LinkEndChild( decl );
 	doc.LinkEndChild( element );
-	doc.SaveFile( "madeByHand.xml" );
+	doc.SaveFile( "/home/bene/Scrivania/merge/salt_right.xml" );
 }
 
 bool add_page( TiXmlElement* page );
 bool add_page( TiXmlElement* page ){
 
 		TiXmlDocument doc;
-		if(!doc.LoadFile("madeByHand.xml")){
+		if(!doc.LoadFile("/home/bene/Scrivania/merge/salt_right.xml")){
 			cerr << doc.ErrorDesc() << endl;
 			return 0;
 		}
@@ -82,7 +82,7 @@ bool add_rect( int i, int a, int b, int c, int d );
 bool add_rect( int i, int a, int b, int c, int d ){
 
 	TiXmlDocument doc;
-	if(!doc.LoadFile("madeByHand.xml")){
+	if(!doc.LoadFile("/home/bene/Scrivania/merge/salt_right.xml")){
 		cerr << doc.ErrorDesc() << endl;
 		return 0;
 	}
@@ -134,10 +134,10 @@ bool scan_page ( int n_page, TiXmlNode* node, bitmap_image image, int i, int y )
 			bool f3 = true;
 
 			double *coord = get_coord(itemElement);
-			int a = int(coord[0])+25;
-			int b = y-int(coord[1]);
-			int c = int(coord[2])+25;
-			int	d = y-int(coord[3]);
+			int a = int( coord[0] ) + 25;
+			int b = y - int( coord[1] );
+			int c = int( coord[2] ) + 25;
+			int	d = y - int( coord[3] );
 
 			draw.rectangle(a,b,c,d);
 			add_rect(n_page, a, b, c, d);
